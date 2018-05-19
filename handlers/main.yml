@@ -1,0 +1,4 @@
+- name: restart swan
+  service: name=strongswan state=restarted
+- name: restart iptables
+  service: name=iptables state=restarted

@@ -1,0 +1,52 @@
+- name: Assert
+  assert:
+    that:
+      - 'pki_dir != ""'
+      - 'swan_fqdn != ""'
+      - 'pki_dir is directory'
+    msg: "Set required vars: pki_dir (path to easyrsa pki) and swan_fqdn (fully qualified domain name of your server)"
+- name: Install swan
+  yum: name=strongswan state=present
+- name: Install strongswan-libipsec
+  yum: name=strongswan-libipsec state=present
+- name: Install git
+  yum: name=git state=present
+  #- name: Install openssl
+  #yum: name=strongswan state=present
+- name: Uninstall firewalld
+  service: name=firewalld state=stopped enabled=no
+- name: Install iptables-services
+  yum: name=iptables-services state=present
+- name: Start iptables-service ipv4 
+  service: name=iptables state=started enabled=yes
+- name: Start ip6tables-service ipv4 
+  service: name=ip6tables state=started enabled=yes
+ 
+- name: upload ipsec.conf
+  template: src=strongswan/ipsec.conf dest={{ swan_base_dir }}/ipsec.conf
+  notify: restart swan
+- name: upload ipsec.secrets
+  template: src=strongswan/ipsec.secrets dest={{ swan_base_dir }}/ipsec.secrets
+  notify: restart swan
+
+- name: upload ca.cert
+  notify: restart swan
+  copy: src={{ pki_dir }}/ca.crt dest={{ swan_base_dir }}/ipsec.d/cacerts/ca.crt
+- name: upload server cert
+  notify: restart swan
+  copy: src={{ pki_dir }}/issued/{{ swan_fqdn }}.crt dest={{ swan_base_dir }}/ipsec.d/certs/{{ swan_fqdn }}
+- name: upload server key
+  copy: src={{ pki_dir }}/private/{{ swan_fqdn }}.key dest={{ swan_base_dir }}/ipsec.d/private/{{ swan_fqdn }}
+  notify: restart swan
+
+- name: enable ip_forward
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: 1
+    sysctl_set: yes
+    state: present
+    reload: yes
+
+- name: upload firewall configuration
+  template: src=iptables dest=/etc/sysconfig/iptables
+  notify: restart iptables
