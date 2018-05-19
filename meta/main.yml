@@ -1,0 +1,13 @@
+---
+galaxy_info:
+  author: Peter-Sh
+  description: Setup a basic strongswan vpn server with PKI auth on Centos-7
+  license: MIT
+  min_ansible_version: 2.2
+  platforms:
+  - name: Centos
+    versions:
+    - "7"
+  galaxy_tags:
+    - strongswan
+    - vpn
