@@ -21,6 +21,9 @@
   service: name=iptables state=started enabled=yes
 - name: Start ip6tables-service ipv4 
   service: name=ip6tables state=started enabled=yes
+
+- name: Start and enable strongswan
+  service: name=strongswan state=started enabled=yes
  
 - name: upload ipsec.conf
   template: src=strongswan/ipsec.conf dest={{ swan_base_dir }}/ipsec.conf

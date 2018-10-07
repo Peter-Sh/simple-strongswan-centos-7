@@ -3,6 +3,8 @@ swan_fqdn: ""
 swan_ip_pool: 192.168.197.10-192.168.197.250
 firewall_subnets:
   - 192.168.197.0/24
+firewall_tcp_ports_allowed: []
+firewall_udp_ports_allowed: []
 swan_dns: 1.1.1.1,8.8.8.8
 swan_base_dir: /etc/strongswan
 
