@@ -24,6 +24,14 @@
 
 - name: Start and enable strongswan
   service: name=strongswan state=started enabled=yes
+
+- name: Create dirs for custom ipsec connections and secrets
+  file:
+    path: "/etc/strongswan/ipsec.d/{{ item }}"
+    state: directory
+  loop:
+    - connections
+    - secrets
  
 - name: upload ipsec.conf
   template: src=strongswan/ipsec.conf dest={{ swan_base_dir }}/ipsec.conf
